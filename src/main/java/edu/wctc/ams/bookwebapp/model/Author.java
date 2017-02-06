@@ -1,4 +1,4 @@
-package edu.wctc.web.demo.bookwebapp.model;
+package edu.wctc.ams.bookwebapp.model;
 
 import java.util.Date;
 import java.util.Objects;

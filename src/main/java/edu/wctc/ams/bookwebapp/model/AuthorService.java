@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author aschindler1
  */
-public class AuthorService {
+public class AuthorService implements DatabaseService{
     
     public final List<Author> createList(){
         List<Author> newList = new ArrayList<Author>();
@@ -23,5 +23,11 @@ public class AuthorService {
         
         return newList;
     }
-    
+    /*public static void main(String[] args) {
+        AuthorService as = new AuthorService();
+        List<Author> howdy = as.createList();
+        for(Author a: howdy){
+            System.out.println(a.getAuthorName());
+        }
+    }*/
 }
