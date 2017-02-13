@@ -14,7 +14,7 @@
         <title>JSP Page</title>
     </head>
     <body>
-        if you made it here, it worked. <c:out value="${authorList.size()}" /> entries are here<br><br>
+        if you made it here, it worked. <c:out value="${authorList.size()}" /> entries are located here<br><br>
         <table text-align="center">
             <tr>
                 <td>ID</td>

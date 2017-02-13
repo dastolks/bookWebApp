@@ -24,14 +24,16 @@ import java.util.Map;
  */
 public class MySQLDbAccessor {
     private Connection conn;
+    private Statement stmt;
+    private ResultSet rs;
     
     public List<Map<String,Object>> findRecordsFor(String tableName, int maxRecords) throws SQLException{
        String sql = "SELECT * FROM " + tableName + " LIMIT " + maxRecords;
        
        List<Map<String,Object>> results = new ArrayList<>();
        
-       Statement stmt = conn.createStatement();
-       ResultSet rs = stmt.executeQuery(sql);
+       stmt = conn.createStatement();
+       rs = stmt.executeQuery(sql);
        
        return results;
     }
