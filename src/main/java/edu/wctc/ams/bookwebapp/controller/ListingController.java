@@ -6,9 +6,11 @@
 package edu.wctc.ams.bookwebapp.controller;
 
 import edu.wctc.ams.bookwebapp.model.Author;
+import edu.wctc.ams.bookwebapp.model.AuthorDao;
 import edu.wctc.ams.bookwebapp.model.AuthorService;
 import edu.wctc.ams.bookwebapp.model.DatabaseService;
 import edu.wctc.ams.bookwebapp.model.DatabasesEnum;
+import edu.wctc.ams.bookwebapp.model.MySQLDbAccessor;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -48,8 +50,11 @@ public class ListingController extends HttpServlet {
         try {
             switch(de){
                 case AUTHOR:
-                    ds = new AuthorService();
-                    List<Author> authorList = ds.createList();
+                    ds = new AuthorService(
+            new AuthorDao(new MySQLDbAccessor(),
+            "com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/book", "root", "admin")
+        );
+                    List<Author> authorList = ds.createList("author",50);
                     request.setAttribute("authorList", authorList);
                     NEXT_PAGE = "/authorList.jsp";
                 break;

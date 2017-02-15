@@ -7,6 +7,7 @@ package edu.wctc.ams.bookwebapp.model;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 /**
  *
  * @author aschindler1
@@ -28,6 +30,50 @@ public class MySQLDbAccessor implements DbAccessor {
     private Connection conn;
     private Statement stmt;
     private ResultSet rs;
+    
+    private void deleteById(String tableName, String columnName, Object id){
+        String sId;
+        Integer intId;
+        
+        if(id instanceof String){
+            sId = id.toString();
+        }
+        else if(id instanceof Integer){
+            intId = (Integer)id;
+        }
+        //SQL statement
+        String sql = "";
+        sql = "DELETE FROM " + tableName + " WHERE " + columnName + " = " + id;
+        //create statement
+        //stmt.updateQuery();
+    }
+    public void updateRecord(String tableName, List<String> colNames, List colValues){
+        
+    }
+    public void insertRecord(String tableName, List<String> colNames, List colValues) throws SQLException {
+        String sql = "INSERT INTO " + tableName + " ";
+        StringJoiner sj = new StringJoiner(",","(",")");
+//match up lists togethers
+        for(String col: colNames){
+            sj.add(col);
+        }
+        sql += sj.toString();
+        //construct sql statement
+        sj = new StringJoiner(",","(",")");
+        sql += " VALUES ";
+        
+        for(Object val: colNames){
+            sj.add("?");
+        }    
+        sql += sj.toString();
+        
+        PreparedStatement ps = conn.prepareStatement(sql);
+        
+        for(int i = 0; i<colValues.size(); i++){
+            ps.setObject(i+1, colValues.get(i));
+        } 
+        int recsUpdated = ps.executeUpdate();
+    }
     
     @Override
     public List<Map<String,Object>> findRecordsFor(String tableName, int maxRecords) throws SQLException{
@@ -81,9 +127,9 @@ public class MySQLDbAccessor implements DbAccessor {
     
     public static void main(String[] args) throws Exception {
         DbAccessor db = new MySQLDbAccessor();
-        db.openConnection("com.mysql.jdbc.Driver", "jdbc:mysql://bit.glassfish.wctc.edu:3306/sakila", "advjava", "advjava");
+        db.openConnection("com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/book", "root", "admin");
         
-        List<Map<String,Object>> records = db.findRecordsFor("actor", 50);
+        List<Map<String,Object>> records = db.findRecordsFor("author", 50);
         
         for(Map<String, Object> record: records){
             System.out.println(record);

@@ -5,6 +5,7 @@
  */
 package edu.wctc.ams.bookwebapp.model;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,14 +15,25 @@ import java.util.List;
  * @author aschindler1
  */
 public class AuthorService implements DatabaseService{
+    private AuthorDaoInterface dao;
+
+    public AuthorService(AuthorDaoInterface dao) {
+        this.dao = dao;
+    }
+
     
-    public final List<Author> createList(){
-        List<Author> newList = new ArrayList<Author>();
-        newList.add(new Author(1, "Mark Twain", new Date()));
-        newList.add(new Author(2, "Tom Clancy", new Date()));
-        newList.add(new Author(3, "Sir Arthur Conan Doyle", new Date()));
-        
-        return newList;
+    
+    public AuthorDaoInterface getDao() {
+        return dao;
+    }
+
+    public void setDao(AuthorDaoInterface dao) {
+        this.dao = dao;
+    }
+    
+    
+    public final List<Author> createList(String tableName, int maxRecords) throws ClassNotFoundException, SQLException{
+        return dao.getAuthorList(tableName, maxRecords);
     }
     /*public static void main(String[] args) {
         AuthorService as = new AuthorService();
@@ -30,4 +42,20 @@ public class AuthorService implements DatabaseService{
             System.out.println(a.getAuthorName());
         }
     }*/
+    public static void main(String[] args) {
+        AuthorService as = new AuthorService(
+            new AuthorDao(new MySQLDbAccessor(),
+            "com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/book", "root", "admin")
+        );
+        try{
+            List<Author> authors = as.createList("author", 50);
+
+            for(Author record: authors){
+                System.out.println(record);
+            }
+        }
+        catch(Exception e){
+            
+        }
+    }
 }
