@@ -16,10 +16,15 @@ import java.util.Map;
 public interface DbAccessor {
 
     void closeConnection() throws SQLException;
-
+    
+    void insertRecord(String tableName, List<String> colNames, List colValues) throws SQLException;
+    
+    void deleteById(String tableName, String columnName, Object id) throws SQLException;
+    
+    void updateRecord(String tableName, List<String> colNames, List colValues, String pk, Object idpk) throws SQLException;
+    
     List<Map<String, Object>> findRecordsFor(String tableName, int maxRecords) throws SQLException;
 
     //consider creating a custom exception
     void openConnection(String driverClass, String url, String username, String password) throws ClassNotFoundException, SQLException;
-    
 }

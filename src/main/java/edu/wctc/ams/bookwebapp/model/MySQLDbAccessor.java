@@ -31,9 +31,9 @@ public class MySQLDbAccessor implements DbAccessor {
     private Statement stmt;
     private ResultSet rs;
     
-    private void deleteById(String tableName, String columnName, Object id){
+    public void deleteById(String tableName, String columnName, Object id) throws SQLException{
         String sId;
-        Integer intId;
+        Integer intId, updateCount;
         
         if(id instanceof String){
             sId = id.toString();
@@ -45,15 +45,40 @@ public class MySQLDbAccessor implements DbAccessor {
         String sql = "";
         sql = "DELETE FROM " + tableName + " WHERE " + columnName + " = " + id;
         //create statement
-        //stmt.updateQuery();
+        updateCount = stmt.executeUpdate(sql);  
+        sql = "ALTER TABLE " + tableName + " AUTO_INCREMENT = " + 1;
+        stmt.executeUpdate(sql);  
     }
-    public void updateRecord(String tableName, List<String> colNames, List colValues){
+    public void updateRecord(String tableName, List<String> colNames, List colValues, String pk, Object idpk) throws SQLException{
+        //                        int recId = 200; // pick an existing id from your search results
+//                        sql = "UPDATE actor SET first_name = 'Bob', last_name = 'Smith'"
+//                                + " WHERE actor_id = " + recId;
+        String stringID;
+        Integer intID;
         
+        if(idpk instanceof String){
+            stringID = idpk.toString();
+        }
+        else if(idpk instanceof Integer){
+            intID = (Integer)idpk;
+        }
+        String sql = "UPDATE " + tableName + " SET";
+        StringJoiner sj = new StringJoiner(",","","");
+        for(int i = 0; i < colNames.size(); i++){
+            sj.add(" " + colNames.get(i) + " = '" + colValues.get(i) + "'");
+        }
+        sql += sj.toString();
+        sql += " WHERE " + pk + " = " + idpk;
+        System.out.println(sql);
+        
+        stmt = conn.createStatement();
+        int updateCount = stmt.executeUpdate(sql);  
+
     }
     public void insertRecord(String tableName, List<String> colNames, List colValues) throws SQLException {
         String sql = "INSERT INTO " + tableName + " ";
         StringJoiner sj = new StringJoiner(",","(",")");
-//match up lists togethers
+        //match up lists togethers
         for(String col: colNames){
             sj.add(col);
         }
@@ -129,11 +154,34 @@ public class MySQLDbAccessor implements DbAccessor {
         DbAccessor db = new MySQLDbAccessor();
         db.openConnection("com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/book", "root", "admin");
         
+        
+        
+        List<String> parameters = new ArrayList<String>();
+        parameters.add("author_name");
+        parameters.add("date_added");
+        
+        List<Object> attributes = new ArrayList<>();
+        attributes.add("Hajime Kanzakaadasdasdaaaa");
+        attributes.add("2017-02-16");
+    
+        //db.insertRecord("author", parameters, attributes);
+        
+        db.updateRecord("author", parameters, attributes, "author_ID", 4);
+        
         List<Map<String,Object>> records = db.findRecordsFor("author", 50);
         
         for(Map<String, Object> record: records){
             System.out.println(record);
         }
+       // System.out.println("Deleting....");
+       // db.deleteById("author", "author_id", 5);
+        
+       // records = db.findRecordsFor("author", 50);
+        
+//        for(Map<String, Object> record: records){
+//            System.out.println(record);
+//        }
+//        
         db.closeConnection();
     }
 }
