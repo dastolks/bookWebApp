@@ -60,6 +60,37 @@ public class AuthorDao implements AuthorDaoInterface {
     } 
     
     @Override
+    public void deleteFromAuthorList(String tableName, String tablePK, Object pk) throws SQLException, Exception{
+        if(db != null){
+            db.openConnection(driverClass, url, username, password);
+            db.deleteById(tableName, tablePK, pk);
+            db.closeConnection();
+        }
+        else{
+            throw new Exception("Database not found.");
+        }
+    }
+    
+    @Override
+    public void insertNewAuthor(String tableName, List<String> colNames, List colValues) throws SQLException, ClassNotFoundException{
+        if(db != null){
+            db.openConnection(driverClass, url, username, password);
+            db.insertRecord(tableName, colNames, colValues);
+            db.closeConnection();
+        }
+    }
+    
+    @Override
+    public void updateRecord(String tableName, List<String> colNames, List colValues, String pk, Object idpk) throws SQLException, ClassNotFoundException{
+        if(db != null){
+            db.openConnection(driverClass, url, username, password);
+            db.updateRecord(tableName, colNames, colValues, pk, idpk);
+            db.closeConnection();
+        }        
+        
+    }
+    
+    @Override
     public String getDriverClass() {
         return driverClass;
     }
@@ -117,5 +148,42 @@ public class AuthorDao implements AuthorDaoInterface {
         for(Author record: authors){
             System.out.println(record);
         }
+        
+        dao.deleteFromAuthorList("author", "author_ID", 4);
+        
+        authors = dao.getAuthorList("author", 50);
+          
+        for(Author record: authors){
+            System.out.println(record);
+        }
+        List<String> parameters = new ArrayList<String>();
+        parameters.add("author_name");
+        parameters.add("date_added");
+        
+        List<Object> attributes = new ArrayList<>();
+        attributes.add("Hajime Kanzaka");
+        attributes.add("2017-02-16");
+        
+        dao.insertNewAuthor("author", parameters, attributes);
+        authors = dao.getAuthorList("author", 50);
+          
+        for(Author record: authors){
+            System.out.println(record);
+        }        
+        parameters = new ArrayList<String>();
+        parameters.add("author_name");
+        parameters.add("date_added");
+        
+        attributes = new ArrayList<>();
+        attributes.add("Hajime Kanzaaaaaaaaaaaaaka");
+        attributes.add("2017-02-16");    
+        dao.updateRecord("author", parameters, attributes, "author_ID", 4);
+        
+        authors = dao.getAuthorList("author", 50);
+          
+        for(Author record: authors){
+            System.out.println(record);
+        }         
+        
     }
 }

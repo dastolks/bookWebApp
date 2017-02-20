@@ -16,6 +16,12 @@ public interface AuthorDaoInterface {
 
     List<Author> getAuthorList(String tableName, int maxRecords) throws ClassNotFoundException, SQLException;
 
+    void deleteFromAuthorList(String tableName, String tablePK, Object pk) throws SQLException, Exception;
+    
+    void insertNewAuthor(String tableName, List<String> colNames, List colValues) throws SQLException, ClassNotFoundException;
+    
+    void updateRecord(String tableName, List<String> colNames, List colValues, String pk, Object idpk) throws SQLException, ClassNotFoundException;
+    
     DbAccessor getDb();
 
     String getDriverClass();

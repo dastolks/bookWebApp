@@ -45,6 +45,7 @@ public class MySQLDbAccessor implements DbAccessor {
         String sql = "";
         sql = "DELETE FROM " + tableName + " WHERE " + columnName + " = " + id;
         //create statement
+        stmt = conn.createStatement();
         updateCount = stmt.executeUpdate(sql);  
         sql = "ALTER TABLE " + tableName + " AUTO_INCREMENT = " + 1;
         stmt.executeUpdate(sql);  
@@ -161,12 +162,12 @@ public class MySQLDbAccessor implements DbAccessor {
         parameters.add("date_added");
         
         List<Object> attributes = new ArrayList<>();
-        attributes.add("Hajime Kanzakaadasdasdaaaa");
+        attributes.add("Hajime Kanzaka");
         attributes.add("2017-02-16");
     
-        //db.insertRecord("author", parameters, attributes);
+        db.insertRecord("author", parameters, attributes);
         
-        db.updateRecord("author", parameters, attributes, "author_ID", 4);
+        //db.updateRecord("author", parameters, attributes, "author_ID", 4);
         
         List<Map<String,Object>> records = db.findRecordsFor("author", 50);
         
