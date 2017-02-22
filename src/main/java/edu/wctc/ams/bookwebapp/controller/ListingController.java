@@ -38,7 +38,8 @@ public class ListingController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     private String NEXT_PAGE = "";
-    private DatabasesEnum de = DatabasesEnum.SCHOOLS;
+    private DatabasesEnum de = DatabasesEnum.EDIT_DELETE;
+    private int editPage = 1;
     private AuthorService ds;
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -51,12 +52,24 @@ public class ListingController extends HttpServlet {
             switch(de){
                 case AUTHOR:
                     ds = new AuthorService(
-            new AuthorDao(new MySQLDbAccessor(),
-            "com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/book", "root", "admin")
-        );
+                    new AuthorDao(new MySQLDbAccessor(),
+                    "com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/book", "root", "admin"));
                     List<Author> authorList = ds.createList("author",50);
                     request.setAttribute("authorList", authorList);
                     NEXT_PAGE = "/authorList.jsp";
+                break;
+                case EDIT_DELETE:
+                    ds = new AuthorService(
+                    new AuthorDao(new MySQLDbAccessor(),
+                    "com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/book", "root", "admin"));
+                    // if using checkbox you must use request.getParameterValues("authorId")
+                    // which returns and array Strings
+                    // get value of radio button
+                    String rdoValue = request.getParameter("authorIdBtn");
+//                    if(){
+//                        
+//                    }
+                    
                 break;
             }
             /* TODO output your page here. You may use following sample code. */

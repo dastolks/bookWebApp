@@ -10,5 +10,5 @@ package edu.wctc.ams.bookwebapp.model;
  * @author Alec
  */
 public enum DatabasesEnum {
-    AUTHOR, SCHOOLS, BOOKS
+    AUTHOR, EDIT_DELETE, UPDATE
 }
