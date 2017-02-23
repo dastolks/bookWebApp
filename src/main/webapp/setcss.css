@@ -20,5 +20,5 @@ tr:nth-of-type(odd){
     background: #BBDDDD;
 }
 td{
-    width: 10%;
+    width: 100px;
 }
