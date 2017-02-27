@@ -47,6 +47,11 @@ public class ListingController extends HttpServlet {
     private int editPage = 1;
     private AuthorService ds;
     
+    private String driverClass;
+    private String url;
+    private String userName;
+    private String password;
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -55,8 +60,7 @@ public class ListingController extends HttpServlet {
         
         try {
             ds = new AuthorService(
-                    new AuthorDao(new MySQLDbAccessor(),
-                    "com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/book", "root", "admin"));
+                    new AuthorDao(new MySQLDbAccessor(),driverClass, url, userName, password));
             switch(de){
                 case AUTHOR:
 //                    ds = new AuthorService(
@@ -81,7 +85,7 @@ public class ListingController extends HttpServlet {
                     String submitEdit = request.getParameter("submitForm");
                     String submitDelete = request.getParameter("submitFormDelete");
                     String submitAdd = request.getParameter("submitFormAdd");
-                    System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + submitAdd);
+                    //System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + submitAdd);
                     
                     
                     if(submitEdit != null && !submitEdit.equals("")){
@@ -199,5 +203,11 @@ public class ListingController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
+    @Override
+    public void init() throws ServletException{
+        driverClass = getServletContext().getInitParameter("db.driver.class");
+        url = getServletContext().getInitParameter("db.url");
+        userName = getServletContext().getInitParameter("db.username");
+        password = getServletContext().getInitParameter("db.password");
+    }
 }
