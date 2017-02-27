@@ -20,5 +20,12 @@ tr:nth-of-type(odd){
     background: #BBDDDD;
 }
 td{
-    width: 100px;
+    width: 150px;
+}
+body{
+    font-family: Arial;
+    
+}
+a{
+    font-size: 1.25em;
 }

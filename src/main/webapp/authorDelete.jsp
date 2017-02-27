@@ -10,9 +10,10 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP Page</title>
+        <link rel="StyleSheet" href="setcss.css">
     </head>
     <body>
-        <h1>Request ${radioValue} has been deleted!</h1>
+        <h1>Entry ID ${radioValue} has been deleted!</h1>
          <a href="ListC?de=AUTHOR">Return To The List</a>
     </body>
 </html>

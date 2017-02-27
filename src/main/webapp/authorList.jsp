@@ -15,9 +15,8 @@
         <link rel="StyleSheet" href="setcss.css">
     </head>
     <body>
-        if you made it here, it worked. <c:out value="${authorList.size()}" /> entries are located here<br><br>
+        <c:out value="${authorList.size()}" /> entries are located here.<br><br>
         <c:set var="selected" value="-1" />
-        asdgsd
         <form id="form1" name="form1" method="POST" action="ListC?de=EDIT_DELETE_CREATE">
             <table>
                 <tr>
@@ -33,7 +32,7 @@
                         <td>${authorList.get(i).getDateAdded()}</td>  
                     </tr>
                 </c:forEach>
-            </table>
+            </table><br><br>
             <input id="submitForm" name="submitForm" type="submit" value="Edit Author">
             <input id="submitFormDelete" name="submitFormDelete" type="submit" value="Delete Author"> 
             <input id="submitFormAdd" name="submitFormAdd" type="submit" value="Add Author">

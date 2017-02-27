@@ -29,8 +29,9 @@
                     <td>${author.getDateAdded()}</td>
                 </tr>
             </table>
-            <a href="ListC?de=AUTHOR">Return To The List</a> &nbsp;&nbsp;&nbsp;&nbsp;
-            <input id="SubmitButton" name="SubmitButton" type="submit" value="Update!">
+            <input id="SubmitButton" name="SubmitButton" type="submit" value="Update Entry!"><br><br>
+            
+            <a href="ListC?de=AUTHOR">Return To The List</a>       
         </form>
         
     </body>

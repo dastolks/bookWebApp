@@ -24,6 +24,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -147,7 +148,7 @@ public class ListingController extends HttpServlet {
             /* TODO output your page here. You may use following sample code. */
         }
         catch(Exception e){
-            
+            JOptionPane.showMessageDialog(null, e);
         }
         RequestDispatcher view = request.getRequestDispatcher(NEXT_PAGE);
         view.forward(request, response);
