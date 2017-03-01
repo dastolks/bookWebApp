@@ -8,6 +8,7 @@ package edu.wctc.ams.bookwebapp.model;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import javax.sql.DataSource;
 
 /**
  *
@@ -27,4 +28,6 @@ public interface DbAccessor {
 
     //consider creating a custom exception
     void openConnection(String driverClass, String url, String username, String password) throws ClassNotFoundException, SQLException;
+
+    void openConnection(DataSource ds) throws SQLException;
 }

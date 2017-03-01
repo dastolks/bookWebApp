@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import javax.sql.DataSource;
 /**
  *
  * @author aschindler1
@@ -141,8 +142,21 @@ public class MySQLDbAccessor implements DbAccessor {
         //needs validation
         Class.forName(driverClass);
         conn = DriverManager.getConnection(url, username, password);
-        
     }
+        /**
+     * Open a connection using a connection pool configured on server.
+     *
+     * @param ds - a reference to a connection pool via a JNDI name, producing
+     * this object. Typically done in a servlet using InitalContext object.
+     * @throws SQLException - if ds cannot be established
+     */
+        @Override
+        public final void openConnection(DataSource ds) throws SQLException {
+            conn = ds.getConnection();
+        }
+
+    // END MySqlDBAccessor modifications
+
     
     @Override
     public void closeConnection() throws SQLException{

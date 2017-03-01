@@ -7,23 +7,29 @@ package edu.wctc.ams.bookwebapp.controller;
 
 import edu.wctc.ams.bookwebapp.model.Author;
 import edu.wctc.ams.bookwebapp.model.AuthorDao;
+import edu.wctc.ams.bookwebapp.model.AuthorDaoInterface;
 import edu.wctc.ams.bookwebapp.model.AuthorService;
 import edu.wctc.ams.bookwebapp.model.DatabaseService;
 import edu.wctc.ams.bookwebapp.model.DatabasesEnum;
+import edu.wctc.ams.bookwebapp.model.DbAccessor;
 import edu.wctc.ams.bookwebapp.model.MySQLDbAccessor;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 import javax.swing.JOptionPane;
 
 /**
@@ -47,10 +53,15 @@ public class ListingController extends HttpServlet {
     private int editPage = 1;
     private AuthorService ds;
     
+    private final String AUTHOR_NAME = "author_name";
+    
     private String driverClass;
     private String url;
     private String userName;
     private String password;
+    private String dbStrategyClassName;
+    private String daoClassName;
+    private String jndiName;
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -59,8 +70,9 @@ public class ListingController extends HttpServlet {
         de = DatabasesEnum.valueOf(request.getParameter("de"));
         
         try {
-            ds = new AuthorService(
-                    new AuthorDao(new MySQLDbAccessor(),driverClass, url, userName, password));
+//            ds = new AuthorService(
+//                    new AuthorDao(new MySQLDbAccessor(),driverClass, url, userName, password));
+            ds = injectDependenciesAndGetAuthorService();
             switch(de){
                 case AUTHOR:
 //                    ds = new AuthorService(
@@ -152,11 +164,82 @@ public class ListingController extends HttpServlet {
             /* TODO output your page here. You may use following sample code. */
         }
         catch(Exception e){
-            JOptionPane.showMessageDialog(null, e);
+//            JOptionPane.showMessageDialog(null, e);
+            System.out.println(e.getMessage());
         }
         RequestDispatcher view = request.getRequestDispatcher(NEXT_PAGE);
         view.forward(request, response);
     }
+    private AuthorService injectDependenciesAndGetAuthorService() throws Exception {
+        // Use Liskov Substitution Principle and Java Reflection to
+        // instantiate the chosen DBStrategy based on the class name retrieved
+        // from web.xml
+        Class dbClass = Class.forName(dbStrategyClassName);
+        // Use Java reflection to instanntiate the DBStrategy object
+        // Note that DBStrategy classes have no constructor params
+        DbAccessor db = (DbAccessor) dbClass.newInstance();
+        System.out.println("Made it here 1");
+        // Use Liskov Substitution Principle and Java Reflection to
+        // instantiate the chosen DAO based on the class name retrieved above.
+        // This one is trickier because the available DAO classes have
+        // different constructor params
+        AuthorDaoInterface authorDao = null;
+        Class daoClass = Class.forName(daoClassName);
+        Constructor constructor = null;
+        System.out.println("Made it here 2");
+        System.out.println("The value of daoClass is " + daoClass);
+        // This will only work for the non-pooled AuthorDao
+        try {
+            constructor = daoClass.getConstructor(new Class[]{
+                DbAccessor.class, String.class, String.class, String.class, String.class
+            });
+        } catch(NoSuchMethodException nsme) {
+            // do nothing, the exception means that there is no such constructor,
+            // so code will continue executing below
+        }
+        System.out.println("Made it here 3");
+        System.out.println("the value of constructor is " + constructor);
+
+        // constructor will be null if using connectin pool dao because the
+        // constructor has a different number and type of arguments
+        
+        if (constructor != null) {
+            // conn pool NOT used so constructor has these arguments
+            Object[] constructorArgs = new Object[]{
+                db, driverClass, url, userName, password
+            };
+            authorDao = (AuthorDaoInterface) constructor
+                    .newInstance(constructorArgs);
+
+        } else {
+            /*
+             Here's what the connection pool version looks like. First
+             we lookup the JNDI name of the Glassfish connection pool
+             and then we use Java Refletion to create the needed
+             objects based on the servlet init params
+             */
+            Context ctx = new InitialContext();
+//            Context envCtx = (Context) ctx.lookup("java:comp/env");
+            System.out.println("Made it here 4");
+            System.out.println("JndiName is " + jndiName);
+//            System.out.println("values of ctx and envCtx are " + ctx + " and " + envCtx);
+            DataSource ds = (DataSource) ctx.lookup(jndiName);
+            System.out.println("Made it here 5");
+            constructor = daoClass.getConstructor(new Class[]{
+                DataSource.class, DbAccessor.class
+            });
+            
+            Object[] constructorArgs = new Object[]{
+                ds, db
+            };
+
+            authorDao = (AuthorDaoInterface) constructor
+                    .newInstance(constructorArgs);
+        }
+        System.out.println("Made it here past if");
+        return new AuthorService(authorDao);
+    }
+    
     private void loadAuthorList(HttpServletRequest request) throws ClassNotFoundException, SQLException{
 //        ds = new AuthorService(
 //        new AuthorDao(new MySQLDbAccessor(),
@@ -174,6 +257,16 @@ public class ListingController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    @Override
+    public void init() throws ServletException{
+        driverClass = getServletContext().getInitParameter("db.driver.class");
+        url = getServletContext().getInitParameter("db.url");
+        userName = getServletContext().getInitParameter("db.username");
+        password = getServletContext().getInitParameter("db.password");
+        dbStrategyClassName = getServletContext().getInitParameter("dbStrategyClass");
+        daoClassName = getServletContext().getInitParameter("authorDao");
+        jndiName = getServletContext().getInitParameter("connPoolName");
+    }
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -203,11 +296,5 @@ public class ListingController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-    @Override
-    public void init() throws ServletException{
-        driverClass = getServletContext().getInitParameter("db.driver.class");
-        url = getServletContext().getInitParameter("db.url");
-        userName = getServletContext().getInitParameter("db.username");
-        password = getServletContext().getInitParameter("db.password");
-    }
+
 }
