@@ -53,8 +53,6 @@ public class ListingController extends HttpServlet {
     private int editPage = 1;
     private AuthorService ds;
     
-    private final String AUTHOR_NAME = "author_name";
-    
     private String driverClass;
     private String url;
     private String userName;
@@ -62,6 +60,13 @@ public class ListingController extends HttpServlet {
     private String dbStrategyClassName;
     private String daoClassName;
     private String jndiName;
+    
+    private String AUTHOR_TABLENAME = "author";
+    private String AUTHOR_ID = "author_ID";
+    private final String AUTHOR_NAME = "author_name";
+    private final String RADIO_VALUE = "radioValue";
+    private final String NAME_EDIT = "nameEdit";
+    
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -91,7 +96,7 @@ public class ListingController extends HttpServlet {
                     // which returns and array Strings
                     // get value of radio button
                     
-                    List<Author> authorListTwo = ds.createList("author",50);
+                    List<Author> authorListTwo = ds.createList(AUTHOR_TABLENAME,50);
                     Author testAuthor = new Author();
                     
                     String submitEdit = request.getParameter("submitForm");
@@ -102,22 +107,22 @@ public class ListingController extends HttpServlet {
                     
                     if(submitEdit != null && !submitEdit.equals("")){
                         int rdoValue = Integer.parseInt(request.getParameter("authorIdBtn"));
-                        request.setAttribute("radioValue", rdoValue);
+                        request.setAttribute(RADIO_VALUE, rdoValue);
                         for(Author a: authorListTwo){
                             if(a.getAuthorId() == rdoValue){
                                 testAuthor = a;
                                 break;
                             }
                         }
-                        request.setAttribute("author", testAuthor);
+                        request.setAttribute(AUTHOR_TABLENAME, testAuthor);
                         request.setAttribute("submitEdit", request.getParameter("submitForm"));
                         request.setAttribute("submitEditDelete", request.getParameter("submitFormDelete"));
                         NEXT_PAGE = "/authorEdit.jsp"; 
                     }
                     if(submitDelete != null && !submitDelete.equals("")){
                         int rdoValue = Integer.parseInt(request.getParameter("authorIdBtn"));
-                        request.setAttribute("radioValue", rdoValue);
-                        ds.deleteFromList("author", "author_ID", rdoValue);
+                        request.setAttribute(RADIO_VALUE, rdoValue);
+                        ds.deleteFromList(AUTHOR_TABLENAME, AUTHOR_ID, rdoValue);
                         //loadAuthorList(request);
                         NEXT_PAGE = "/authorDelete.jsp";
                     }
@@ -131,14 +136,14 @@ public class ListingController extends HttpServlet {
 //                    "com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/book", "root", "admin"));
                     //Author a = request.getParameter("author");
                     List parameters = new ArrayList();
-                    parameters.add("author_name");
+                    parameters.add(AUTHOR_NAME);
         
                     List<Object> attributes = new ArrayList<>();
-                    attributes.add(request.getParameter("nameEdit"));
-                    System.out.println("why i outta " + request.getParameter("originalValue"));
+                    attributes.add(request.getParameter(NAME_EDIT));
+                    //System.out.println("why i outta " + request.getParameter("originalValue"));
                     int idForAuthors = Integer.parseInt(request.getParameter("originalValue"));
                     
-                    ds.updateRecord("author", parameters, attributes, "author_ID", idForAuthors);
+                    ds.updateRecord(AUTHOR_TABLENAME, parameters, attributes, AUTHOR_ID, idForAuthors);
                     //as.updateRecord("author", parameters, attributes, "author_ID", 4);
                     loadAuthorList(request);
                 break;
@@ -148,16 +153,16 @@ public class ListingController extends HttpServlet {
 //                    "com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/book", "root", "admin"));
 //                    loadAuthorList(request);
                     List<String> parametersAdd = new ArrayList();
-                    parametersAdd.add("author_name");
-                    parametersAdd.add("date_added");
+                    parametersAdd.add(AUTHOR_NAME);
+                    parametersAdd.add(RADIO_VALUE);
         
                     List<Object> attributesAdd = new ArrayList<>();
-                    attributesAdd.add(request.getParameter("nameEdit"));
+                    attributesAdd.add(request.getParameter(NAME_EDIT));
                     Date now = new Date();
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                     attributesAdd.add(sdf.format(now));
                     
-                    ds.insertNew("author", parametersAdd, attributesAdd);
+                    ds.insertNew(AUTHOR_TABLENAME, parametersAdd, attributesAdd);
                     loadAuthorList(request);
                 break;
             }
@@ -178,7 +183,7 @@ public class ListingController extends HttpServlet {
         // Use Java reflection to instanntiate the DBStrategy object
         // Note that DBStrategy classes have no constructor params
         DbAccessor db = (DbAccessor) dbClass.newInstance();
-        System.out.println("Made it here 1");
+        //System.out.println("Made it here 1");
         // Use Liskov Substitution Principle and Java Reflection to
         // instantiate the chosen DAO based on the class name retrieved above.
         // This one is trickier because the available DAO classes have
@@ -186,8 +191,8 @@ public class ListingController extends HttpServlet {
         AuthorDaoInterface authorDao = null;
         Class daoClass = Class.forName(daoClassName);
         Constructor constructor = null;
-        System.out.println("Made it here 2");
-        System.out.println("The value of daoClass is " + daoClass);
+        //System.out.println("Made it here 2");
+        //System.out.println("The value of daoClass is " + daoClass);
         // This will only work for the non-pooled AuthorDao
         try {
             constructor = daoClass.getConstructor(new Class[]{
@@ -197,8 +202,8 @@ public class ListingController extends HttpServlet {
             // do nothing, the exception means that there is no such constructor,
             // so code will continue executing below
         }
-        System.out.println("Made it here 3");
-        System.out.println("the value of constructor is " + constructor);
+        //System.out.println("Made it here 3");
+        //System.out.println("the value of constructor is " + constructor);
 
         // constructor will be null if using connectin pool dao because the
         // constructor has a different number and type of arguments
@@ -220,11 +225,11 @@ public class ListingController extends HttpServlet {
              */
             Context ctx = new InitialContext();
 //            Context envCtx = (Context) ctx.lookup("java:comp/env");
-            System.out.println("Made it here 4");
-            System.out.println("JndiName is " + jndiName);
+            //System.out.println("Made it here 4");
+            //System.out.println("JndiName is " + jndiName);
 //            System.out.println("values of ctx and envCtx are " + ctx + " and " + envCtx);
             DataSource ds = (DataSource) ctx.lookup(jndiName);
-            System.out.println("Made it here 5");
+            //System.out.println("Made it here 5");
             constructor = daoClass.getConstructor(new Class[]{
                 DataSource.class, DbAccessor.class
             });
@@ -244,7 +249,7 @@ public class ListingController extends HttpServlet {
 //        ds = new AuthorService(
 //        new AuthorDao(new MySQLDbAccessor(),
 //        "com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/book", "root", "admin"));
-        List<Author> authorList = ds.createList("author",50);
+        List<Author> authorList = ds.createList(AUTHOR_TABLENAME,50);
         request.setAttribute("authorList", authorList);
         NEXT_PAGE = "/authorList.jsp";
     }
