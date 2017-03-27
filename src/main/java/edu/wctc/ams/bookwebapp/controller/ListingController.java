@@ -154,7 +154,7 @@ public class ListingController extends HttpServlet {
 //                    loadAuthorList(request);
                     List<String> parametersAdd = new ArrayList();
                     parametersAdd.add(AUTHOR_NAME);
-                    parametersAdd.add(RADIO_VALUE);
+                    parametersAdd.add("date_added");
         
                     List<Object> attributesAdd = new ArrayList<>();
                     attributesAdd.add(request.getParameter(NAME_EDIT));
