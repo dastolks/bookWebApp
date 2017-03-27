@@ -27,7 +27,7 @@
                 
                 <c:forEach var="i" begin="0" end="${authorList.size()-1}">
                     <tr>
-                        <td>${authorList.get(i).getAuthorId()} <input type="radio" name="authorIdBtn" value="${authorList.get(i).getAuthorId()}"> </td>   
+                        <td>${authorList.get(i).getAuthorID()} <input type="radio" name="authorIdBtn" value="${authorList.get(i).getAuthorID()}"> </td>   
                         <td>${authorList.get(i).getAuthorName()}</td>
                         <td>${authorList.get(i).getDateAdded()}</td>  
                     </tr>
