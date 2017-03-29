@@ -113,7 +113,7 @@ public class ListingController extends HttpServlet {
                     if(submitDelete != null && !submitDelete.equals("")){
                         int rdoValue = Integer.parseInt(request.getParameter("authorIdBtn"));
                         request.setAttribute(RADIO_VALUE, rdoValue);
-                        authService.deleteById(AUTHOR_ID);
+                        authService.deleteById(request.getParameter("authorIdBtn"));
                         //loadAuthorList(request);
                         NEXT_PAGE = "/authorDelete.jsp";
                     }
@@ -126,14 +126,15 @@ public class ListingController extends HttpServlet {
 //                    new AuthorDao(new MySQLDbAccessor(),
 //                    "com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/book", "root", "admin"));
                     //Author a = request.getParameter("author");
-                    List parameters = new ArrayList();
-                    parameters.add(AUTHOR_NAME);
-        
-                    List<Object> attributes = new ArrayList<>();
-                    attributes.add(request.getParameter(NAME_EDIT));
+//                    List parameters = new ArrayList();
+//                    parameters.add(AUTHOR_NAME);
+//        
+//                    List<Object> attributes = new ArrayList<>();
+//                    attributes.add(request.getParameter(NAME_EDIT));
+                    String changedName = request.getParameter(NAME_EDIT);
                     //System.out.println("why i outta " + request.getParameter("originalValue"));
-                    int idForAuthors = Integer.parseInt(request.getParameter("originalValue"));
-                    
+                    String idForAuthors = request.getParameter("originalValue");
+                    authService.update(idForAuthors, changedName);
                     //ds.updateRecord(AUTHOR_TABLENAME, parameters, attributes, AUTHOR_ID, idForAuthors);
                     //as.updateRecord("author", parameters, attributes, "author_ID", 4);
                     loadAuthorList(request);
@@ -143,17 +144,19 @@ public class ListingController extends HttpServlet {
 //                    new AuthorDao(new MySQLDbAccessor(),
 //                    "com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/book", "root", "admin"));
 //                    loadAuthorList(request);
-                    List<String> parametersAdd = new ArrayList();
-                    parametersAdd.add(AUTHOR_NAME);
-                    parametersAdd.add("date_added");
-        
-                    List<Object> attributesAdd = new ArrayList<>();
-                    attributesAdd.add(request.getParameter(NAME_EDIT));
-                    Date now = new Date();
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    attributesAdd.add(sdf.format(now));
+//                    List<String> parametersAdd = new ArrayList();
+//                    parametersAdd.add(AUTHOR_NAME);
+//                    parametersAdd.add("date_added");
+//        
+//                    List<Object> attributesAdd = new ArrayList<>();
+//                    attributesAdd.add(request.getParameter(NAME_EDIT));
+//                    Date now = new Date();
+//                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//                    attributesAdd.add(sdf.format(now));
+                    String newName = request.getParameter(NAME_EDIT);
                     
                     //ds.insertNew(AUTHOR_TABLENAME, parametersAdd, attributesAdd);
+                    authService.addNew(newName);
                     loadAuthorList(request);
                 break;
             }

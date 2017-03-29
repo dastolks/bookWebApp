@@ -24,7 +24,7 @@
                     <th>Date Added</th>
                 </tr>
                 <tr>
-                    <td>${author.getAuthorId()} <input id="originalValue" name="originalValue" type="hidden" value="${author.getAuthorId()}"</td>
+                    <td>${author.getAuthorID()} <input id="originalValue" name="originalValue" type="hidden" value="${author.getAuthorID()}"</td>
                     <td><input type="text" name="nameEdit" value="${author.getAuthorName()}"/></td>
                     <td>${author.getDateAdded()}</td>
                 </tr>
