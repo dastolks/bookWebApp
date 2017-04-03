@@ -63,8 +63,31 @@ public class BookController extends HttpServlet {
                     loadBookList(request);
                 break;
                 case EDIT_DELETE_CREATE:
+                    String submitEdit = request.getParameter("submitForm");
+                    String submitDelete = request.getParameter("submitFormDelete");
+                    String submitAdd = request.getParameter("submitFormAdd");
+                    String rdoValue;
+                    if(submitEdit != null){
+                        rdoValue = request.getParameter("bookIdBtn");
+                        int newRdoBtn = Integer.parseInt(rdoValue);
+                        request.setAttribute("book", out);
+                        NEXT_PAGE = "bookEdit.jsp";
+                    }
+                    if(submitDelete != null){
+                        rdoValue = request.getParameter("bookIdBtn");
+                        bookService.deleteById(rdoValue);
+                        NEXT_PAGE = "bookDelete.jsp";
+                    }
+                    if(submitAdd != null){
+                        NEXT_PAGE = "bookAdd.jsp";
+                    }
+                break;
+                case ADD:
                     
-                break;          
+                break;
+                case UPDATE:
+                
+                break;
                 
             }
         }

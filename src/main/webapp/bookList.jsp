@@ -17,7 +17,7 @@
     <body>
         <c:out value="${bookList.size()}" /> entries are located here.<br><br>
         <c:set var="selected" value="-1" />
-        <form id="form1" name="form1" method="POST" action="ListC?de=EDIT_DELETE_CREATE">
+        <form id="form1" name="form1" method="POST" action="BookC?de=EDIT_DELETE_CREATE">
             <table>
                 <tr>
                     <th>ID</th>
@@ -28,7 +28,7 @@
                 
                 <c:forEach var="i" begin="0" end="${bookList.size()-1}">
                     <tr>
-                        <td>${bookList.get(i).getBookId()} <input type="radio" name="authorIdBtn" value="${bookList.get(i).getBookId()}"> </td>   
+                        <td>${bookList.get(i).getBookId()} <input type="radio" name="bookIdBtn" value="${bookList.get(i).getBookId()}"> </td>   
                         <td>${bookList.get(i).getTitle()}</td>
                         <td>${bookList.get(i).getIsbn()}</td>  
                         <td>${bookList.get(i).getAuthorID().getAuthorName()}</td> 
