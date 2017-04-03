@@ -15,6 +15,6 @@
     <body>
         <h1>Choose a link!</h1>
         <a href="ListC?de=AUTHOR">List of Authors</a><br><br>
-       
+        <a href="BookC?de=LIST">List of Books</a>
     </body>
 </html>

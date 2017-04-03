@@ -15,27 +15,29 @@
         <link rel="StyleSheet" href="setcss.css">
     </head>
     <body>
-        <c:out value="${authorList.size()}" /> entries are located here.<br><br>
+        <c:out value="${bookList.size()}" /> entries are located here.<br><br>
         <c:set var="selected" value="-1" />
         <form id="form1" name="form1" method="POST" action="ListC?de=EDIT_DELETE_CREATE">
             <table>
                 <tr>
                     <th>ID</th>
                     <th>Name</th>
-                    <th>Date Added</th>
+                    <th>ISBN</th>
+                    <th>Author</th>
                 </tr>
                 
-                <c:forEach var="i" begin="0" end="${authorList.size()-1}">
+                <c:forEach var="i" begin="0" end="${bookList.size()-1}">
                     <tr>
-                        <td>${authorList.get(i).getAuthorID()} <input type="radio" name="authorIdBtn" value="${authorList.get(i).getAuthorID()}"> </td>   
-                        <td>${authorList.get(i).getAuthorName()}</td>
-                        <td>${authorList.get(i).getDateAdded()}</td>  
+                        <td>${bookList.get(i).getBookId()} <input type="radio" name="authorIdBtn" value="${bookList.get(i).getBookId()}"> </td>   
+                        <td>${bookList.get(i).getTitle()}</td>
+                        <td>${bookList.get(i).getIsbn()}</td>  
+                        <td>${bookList.get(i).getAuthorID().getAuthorName()}</td> 
                     </tr>
                 </c:forEach>
             </table><br><br>
-            <input id="submitForm" name="submitForm" type="submit" value="Edit Author">
-            <input id="submitFormDelete" name="submitFormDelete" type="submit" value="Delete Author"> 
-            <input id="submitFormAdd" name="submitFormAdd" type="submit" value="Add Author">
+            <input id="submitForm" name="submitForm" type="submit" value="Edit Book">
+            <input id="submitFormDelete" name="submitFormDelete" type="submit" value="Delete Book"> 
+            <input id="submitFormAdd" name="submitFormAdd" type="submit" value="Add Book">
         </form>
         <br><br>
         <a href="index.jsp">Click Here</a> to return to the index.
