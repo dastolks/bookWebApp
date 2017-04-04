@@ -27,7 +27,7 @@
                 
                 <c:forEach var="i" begin="0" end="${authorList.size()-1}">
                     <tr>
-                        <td>${authorList.get(i).getAuthorId()} <input type="radio" name="authorIdBtn" value="${authorList.get(i).getAuthorId()}"> </td>   
+                        <td>${authorList.get(i).getAuthorID()} <input type="radio" name="authorIdBtn" value="${authorList.get(i).getAuthorID()}"> </td>   
                         <td>${authorList.get(i).getAuthorName()}</td>
                         <td>${authorList.get(i).getDateAdded()}</td>  
                     </tr>
@@ -37,5 +37,7 @@
             <input id="submitFormDelete" name="submitFormDelete" type="submit" value="Delete Author"> 
             <input id="submitFormAdd" name="submitFormAdd" type="submit" value="Add Author">
         </form>
+        <br><br>
+        <a href="index.jsp">Click Here</a> to return to the index.
     </body>
 </html>

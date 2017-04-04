@@ -4,6 +4,8 @@
     Author     : aschindler1
 --%>
 
+<%@page import="edu.wctc.ams.bookwebapp.model.Book"%>
+<%@page import="java.util.List"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -22,11 +24,19 @@
                     <th>Id</th>
                     <th>Name</th>
                     <th>Date Added</th>
+                    <th>Books Associated</th>
                 </tr>
                 <tr>
-                    <td>${author.getAuthorId()} <input id="originalValue" name="originalValue" type="hidden" value="${author.getAuthorId()}"</td>
+                    <td>${author.getAuthorID()} <input id="originalValue" name="originalValue" type="hidden" value="${author.getAuthorID()}"</td>
                     <td><input type="text" name="nameEdit" value="${author.getAuthorName()}"/></td>
                     <td>${author.getDateAdded()}</td>
+                    <td>
+                        <select name="books">
+                            <c:forEach items="${author.getBookSet()}" var="i">
+                                <option name="${i}">${i.getTitle()}</option>
+                            </c:forEach>
+                        </select>
+                    </td>
                 </tr>
             </table>
             <input id="SubmitButton" name="SubmitButton" type="submit" value="Update Entry!"><br><br>

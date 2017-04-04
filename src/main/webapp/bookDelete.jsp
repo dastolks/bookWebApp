@@ -1,6 +1,6 @@
 <%-- 
-    Document   : index
-    Created on : Feb 6, 2017, 12:17:25 PM
+    Document   : bookDelete
+    Created on : Apr 3, 2017, 11:53:58 AM
     Author     : aschindler1
 --%>
 
@@ -10,11 +10,10 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP Page</title>
-        <link rel="StyleSheet" href="setcss.css">
     </head>
     <body>
-        <h1>Choose a link!</h1>
-        <a href="ListC?de=AUTHOR">List of Authors</a><br><br>
-        <a href="BookC?de=LIST">List of Books</a>
+        <h1>Delete!</h1>
+        Entry ${rdoValue} has been deleted!
+        <a href="BookC?de=LIST">Click here</a> to go back to the list.
     </body>
 </html>

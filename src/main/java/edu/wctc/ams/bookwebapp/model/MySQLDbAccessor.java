@@ -150,10 +150,10 @@ public class MySQLDbAccessor implements DbAccessor {
      * this object. Typically done in a servlet using InitalContext object.
      * @throws SQLException - if ds cannot be established
      */
-        @Override
-        public final void openConnection(DataSource ds) throws SQLException {
-            conn = ds.getConnection();
-        }
+    @Override
+    public final void openConnection(DataSource ds) throws SQLException {
+        conn = ds.getConnection();
+    }
 
     // END MySqlDBAccessor modifications
 
@@ -179,7 +179,7 @@ public class MySQLDbAccessor implements DbAccessor {
         attributes.add("Hajime Kanzaka");
         attributes.add("2017-02-16");
     
-        db.insertRecord("author", parameters, attributes);
+        //db.insertRecord("author", parameters, attributes);
         
         //db.updateRecord("author", parameters, attributes, "author_ID", 4);
         

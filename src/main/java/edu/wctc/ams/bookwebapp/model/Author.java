@@ -28,11 +28,11 @@ public class Author {
         this.dateAdded = dateAdded;
     }
 
-    public final Integer getAuthorId() {
+    public final Integer getAuthorID() {
         return authorId;
     }
 
-    public final void setAuthorId(Integer authorId) throws IllegalArgumentException {
+    public final void setAuthorID(Integer authorId) throws IllegalArgumentException {
         if(authorId == null) {
             throw new IllegalArgumentException("author id" + NULL_MSG);
         }

@@ -6,13 +6,9 @@
 package edu.wctc.ams.bookwebapp.controller;
 
 import edu.wctc.ams.bookwebapp.model.Author;
-import edu.wctc.ams.bookwebapp.model.AuthorDao;
-import edu.wctc.ams.bookwebapp.model.AuthorDaoInterface;
-import edu.wctc.ams.bookwebapp.model.AuthorService;
-import edu.wctc.ams.bookwebapp.model.DatabaseService;
+import edu.wctc.ams.bookwebapp.model.AuthorFacade;
 import edu.wctc.ams.bookwebapp.model.DatabasesEnum;
-import edu.wctc.ams.bookwebapp.model.DbAccessor;
-import edu.wctc.ams.bookwebapp.model.MySQLDbAccessor;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
@@ -21,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.servlet.RequestDispatcher;
@@ -51,15 +48,9 @@ public class ListingController extends HttpServlet {
     private String NEXT_PAGE = "";
     private DatabasesEnum de = DatabasesEnum.EDIT_DELETE_CREATE;
     private int editPage = 1;
-    private AuthorService ds;
     
-    private String driverClass;
-    private String url;
-    private String userName;
-    private String password;
-    private String dbStrategyClassName;
-    private String daoClassName;
-    private String jndiName;
+    @EJB
+    private AuthorFacade authService;
     
     private String AUTHOR_TABLENAME = "author";
     private String AUTHOR_ID = "author_ID";
@@ -77,7 +68,7 @@ public class ListingController extends HttpServlet {
         try {
 //            ds = new AuthorService(
 //                    new AuthorDao(new MySQLDbAccessor(),driverClass, url, userName, password));
-            ds = injectDependenciesAndGetAuthorService();
+            //ds = injectDependenciesAndGetAuthorService();
             switch(de){
                 case AUTHOR:
 //                    ds = new AuthorService(
@@ -96,7 +87,7 @@ public class ListingController extends HttpServlet {
                     // which returns and array Strings
                     // get value of radio button
                     
-                    List<Author> authorListTwo = ds.createList(AUTHOR_TABLENAME,50);
+                    List<Author> authorListTwo = authService.findAll();
                     Author testAuthor = new Author();
                     
                     String submitEdit = request.getParameter("submitForm");
@@ -109,7 +100,7 @@ public class ListingController extends HttpServlet {
                         int rdoValue = Integer.parseInt(request.getParameter("authorIdBtn"));
                         request.setAttribute(RADIO_VALUE, rdoValue);
                         for(Author a: authorListTwo){
-                            if(a.getAuthorId() == rdoValue){
+                            if(a.getAuthorID() == rdoValue){
                                 testAuthor = a;
                                 break;
                             }
@@ -122,7 +113,7 @@ public class ListingController extends HttpServlet {
                     if(submitDelete != null && !submitDelete.equals("")){
                         int rdoValue = Integer.parseInt(request.getParameter("authorIdBtn"));
                         request.setAttribute(RADIO_VALUE, rdoValue);
-                        ds.deleteFromList(AUTHOR_TABLENAME, AUTHOR_ID, rdoValue);
+                        authService.deleteById(request.getParameter("authorIdBtn"));
                         //loadAuthorList(request);
                         NEXT_PAGE = "/authorDelete.jsp";
                     }
@@ -135,15 +126,16 @@ public class ListingController extends HttpServlet {
 //                    new AuthorDao(new MySQLDbAccessor(),
 //                    "com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/book", "root", "admin"));
                     //Author a = request.getParameter("author");
-                    List parameters = new ArrayList();
-                    parameters.add(AUTHOR_NAME);
-        
-                    List<Object> attributes = new ArrayList<>();
-                    attributes.add(request.getParameter(NAME_EDIT));
+//                    List parameters = new ArrayList();
+//                    parameters.add(AUTHOR_NAME);
+//        
+//                    List<Object> attributes = new ArrayList<>();
+//                    attributes.add(request.getParameter(NAME_EDIT));
+                    String changedName = request.getParameter(NAME_EDIT);
                     //System.out.println("why i outta " + request.getParameter("originalValue"));
-                    int idForAuthors = Integer.parseInt(request.getParameter("originalValue"));
-                    
-                    ds.updateRecord(AUTHOR_TABLENAME, parameters, attributes, AUTHOR_ID, idForAuthors);
+                    String idForAuthors = request.getParameter("originalValue");
+                    authService.update(idForAuthors, changedName);
+                    //ds.updateRecord(AUTHOR_TABLENAME, parameters, attributes, AUTHOR_ID, idForAuthors);
                     //as.updateRecord("author", parameters, attributes, "author_ID", 4);
                     loadAuthorList(request);
                 break;
@@ -152,17 +144,19 @@ public class ListingController extends HttpServlet {
 //                    new AuthorDao(new MySQLDbAccessor(),
 //                    "com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/book", "root", "admin"));
 //                    loadAuthorList(request);
-                    List<String> parametersAdd = new ArrayList();
-                    parametersAdd.add(AUTHOR_NAME);
-                    parametersAdd.add(RADIO_VALUE);
-        
-                    List<Object> attributesAdd = new ArrayList<>();
-                    attributesAdd.add(request.getParameter(NAME_EDIT));
-                    Date now = new Date();
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    attributesAdd.add(sdf.format(now));
+//                    List<String> parametersAdd = new ArrayList();
+//                    parametersAdd.add(AUTHOR_NAME);
+//                    parametersAdd.add("date_added");
+//        
+//                    List<Object> attributesAdd = new ArrayList<>();
+//                    attributesAdd.add(request.getParameter(NAME_EDIT));
+//                    Date now = new Date();
+//                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//                    attributesAdd.add(sdf.format(now));
+                    String newName = request.getParameter(NAME_EDIT);
                     
-                    ds.insertNew(AUTHOR_TABLENAME, parametersAdd, attributesAdd);
+                    //ds.insertNew(AUTHOR_TABLENAME, parametersAdd, attributesAdd);
+                    authService.addNew(newName);
                     loadAuthorList(request);
                 break;
             }
@@ -175,7 +169,7 @@ public class ListingController extends HttpServlet {
         RequestDispatcher view = request.getRequestDispatcher(NEXT_PAGE);
         view.forward(request, response);
     }
-    private AuthorService injectDependenciesAndGetAuthorService() throws Exception {
+    /*private AuthorService injectDependenciesAndGetAuthorService() throws Exception {
         // Use Liskov Substitution Principle and Java Reflection to
         // instantiate the chosen DBStrategy based on the class name retrieved
         // from web.xml
@@ -223,7 +217,7 @@ public class ListingController extends HttpServlet {
              and then we use Java Refletion to create the needed
              objects based on the servlet init params
              */
-            Context ctx = new InitialContext();
+            /*Context ctx = new InitialContext();
 //            Context envCtx = (Context) ctx.lookup("java:comp/env");
             //System.out.println("Made it here 4");
             //System.out.println("JndiName is " + jndiName);
@@ -244,12 +238,12 @@ public class ListingController extends HttpServlet {
         System.out.println("Made it here past if");
         return new AuthorService(authorDao);
     }
-    
+    */
     private void loadAuthorList(HttpServletRequest request) throws ClassNotFoundException, SQLException{
 //        ds = new AuthorService(
 //        new AuthorDao(new MySQLDbAccessor(),
 //        "com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/book", "root", "admin"));
-        List<Author> authorList = ds.createList(AUTHOR_TABLENAME,50);
+        List<Author> authorList = authService.findAll();
         request.setAttribute("authorList", authorList);
         NEXT_PAGE = "/authorList.jsp";
     }
@@ -264,13 +258,13 @@ public class ListingController extends HttpServlet {
      */
     @Override
     public void init() throws ServletException{
-        driverClass = getServletContext().getInitParameter("db.driver.class");
+        /*driverClass = getServletContext().getInitParameter("db.driver.class");
         url = getServletContext().getInitParameter("db.url");
         userName = getServletContext().getInitParameter("db.username");
         password = getServletContext().getInitParameter("db.password");
         dbStrategyClassName = getServletContext().getInitParameter("dbStrategyClass");
         daoClassName = getServletContext().getInitParameter("authorDao");
-        jndiName = getServletContext().getInitParameter("connPoolName");
+        jndiName = getServletContext().getInitParameter("connPoolName");*/
     }
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
