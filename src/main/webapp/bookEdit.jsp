@@ -13,7 +13,7 @@
     </head>
     <body>
         <h1>Update!</h1>
-        <form id="goodForm" name="goodForm" method="POST" action="BookC?de=ADD">
+        <form id="goodForm" name="goodForm" method="POST" action="BookC?de=UPDATE">
             <table>
                 <tr>
                     <th>Title</th>
@@ -21,9 +21,17 @@
                     <th>Author</th>
                 </tr>
                 <tr>
+                <input type="hidden" name="bookId" value="${rdoBtnValue}"/>
                     <td><input type="text" name="titleEdit" value="${book.getTitle()}"/></td>
                     <td><input type="text" name="isbnEdit" value="${book.getIsbn()}"/></td>
-                    <td><input type="text" name="authorEdit" value=""/></td>
+                    <!--<td><input type="text" name="authorEdit" value="${book.getAuthorID()}"/></td>-->
+                    <td>
+                        <select name="books">
+                            <c:forEach items="${authorList}" var="i">
+                                <option name="${i}">${i.getAuthorName()}</option>
+                            </c:forEach>
+                        </select>
+                    </td>
                 </tr>
             </table>
             Hit the button below to submit it<br><br>

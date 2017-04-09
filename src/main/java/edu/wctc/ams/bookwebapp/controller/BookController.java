@@ -6,6 +6,7 @@
 package edu.wctc.ams.bookwebapp.controller;
 
 import edu.wctc.ams.bookwebapp.model.Author;
+import edu.wctc.ams.bookwebapp.model.AuthorFacade;
 import edu.wctc.ams.bookwebapp.model.BookEnum;
 import edu.wctc.ams.bookwebapp.model.BookFacade;
 import edu.wctc.ams.bookwebapp.model.Book;
@@ -36,7 +37,8 @@ public class BookController extends HttpServlet {
     
     @EJB
     private BookFacade bookService;
-    
+    @EJB
+    private AuthorFacade authService;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -70,7 +72,12 @@ public class BookController extends HttpServlet {
                     if(submitEdit != null){
                         rdoValue = request.getParameter("bookIdBtn");
                         int newRdoBtn = Integer.parseInt(rdoValue);
-                        request.setAttribute("book", out);
+                        request.setAttribute("rdoBtnValue", newRdoBtn);
+                        Book bkForEditing = findBook(newRdoBtn);
+                        List<Author> authorList = authService.findAll();
+                        System.out.println(authorList);
+                        request.setAttribute("book", bkForEditing);
+                        request.setAttribute("authorList", authorList);
                         NEXT_PAGE = "bookEdit.jsp";
                     }
                     if(submitDelete != null){
@@ -83,10 +90,19 @@ public class BookController extends HttpServlet {
                     }
                 break;
                 case ADD:
-                    
+                    String title = request.getParameter("titleEdit");
+                    String isbn = request.getParameter("isbnEdit");
+                    String idString = request.getParameter("authorEdit");
+                    int trueId = Integer.parseInt(idString);
+                    Author foundFromId = findAuthor(trueId);     
+                    bookService.addNew(title, isbn, foundFromId);
+                    loadBookList(request);
                 break;
                 case UPDATE:
-                
+                    String newTitle = request.getParameter("titleEdit");
+                    String newIsbn = request.getParameter("isbnEdit");
+                    bookService.update(request.getParameter("bookId"), newTitle, newIsbn);
+                    loadBookList(request);
                 break;
                 
             }
@@ -109,8 +125,28 @@ public class BookController extends HttpServlet {
         NEXT_PAGE = "/bookList.jsp";
         System.out.println("next page");
     }
-    
-    
+    private Author findAuthor(int authorId){
+        Author toSet = null;
+        List<Author> authorList = authService.findAll();
+        for(Author a: authorList){
+            if(a.getAuthorID() == authorId){
+                toSet = a;
+                break;
+            }
+        }
+        return toSet;
+    }
+    private Book findBook(int bookId){
+        Book toSet = null;
+        List<Book> bookList = bookService.findAll();
+        for(Book b: bookList){
+            if(b.getBookId() == bookId){
+                toSet = b;
+                break;
+            }
+        }
+        return toSet;
+    }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
