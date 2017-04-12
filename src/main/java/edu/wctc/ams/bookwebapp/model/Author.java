@@ -35,6 +35,8 @@ public class Author implements Serializable {
 
     @OneToMany(mappedBy = "authorID")
     private Set<Book> bookSet;
+    /*@OneToMany(mappedBy = "authorId", cascade = CascadeType.ALL) // this is the big change!!!
+    private Set bookSet; */
 
     private static final long serialVersionUID = 1L;
     @Id
