@@ -5,11 +5,11 @@
  */
 package edu.wctc.ams.bookwebapp.controller;
 
-import edu.wctc.ams.bookwebapp.model.Author;
-import edu.wctc.ams.bookwebapp.model.AuthorFacade;
-import edu.wctc.ams.bookwebapp.model.BookEnum;
-import edu.wctc.ams.bookwebapp.model.BookFacade;
-import edu.wctc.ams.bookwebapp.model.Book;
+import edu.wctc.ams.bookwebapp.entity.Author;
+import edu.wctc.ams.bookwebapp.entity.BookEnum;
+import edu.wctc.ams.bookwebapp.entity.Book;
+import edu.wctc.ams.bookwebapp.service.AuthorService;
+import edu.wctc.ams.bookwebapp.service.BookService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -35,10 +35,9 @@ public class BookController extends HttpServlet {
     private BookEnum de = BookEnum.LIST;
     private String NEXT_PAGE;
     
-    @EJB
-    private BookFacade bookService;
-    @EJB
-    private AuthorFacade authService;
+
+    private BookService bookService;
+    private AuthorService authService;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.

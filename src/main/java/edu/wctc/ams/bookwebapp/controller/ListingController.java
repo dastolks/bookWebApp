@@ -5,9 +5,9 @@
  */
 package edu.wctc.ams.bookwebapp.controller;
 
-import edu.wctc.ams.bookwebapp.model.Author;
-import edu.wctc.ams.bookwebapp.model.AuthorFacade;
-import edu.wctc.ams.bookwebapp.model.DatabasesEnum;
+import edu.wctc.ams.bookwebapp.entity.Author;
+import edu.wctc.ams.bookwebapp.entity.DatabasesEnum;
+import edu.wctc.ams.bookwebapp.service.AuthorService;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -21,6 +21,7 @@ import javax.ejb.EJB;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -28,6 +29,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import javax.swing.JOptionPane;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
  *
@@ -49,8 +52,8 @@ public class ListingController extends HttpServlet {
     private DatabasesEnum de = DatabasesEnum.EDIT_DELETE_CREATE;
     private int editPage = 1;
     
-    @EJB
-    private AuthorFacade authService;
+    
+    private AuthorService authService;
     
     private String AUTHOR_TABLENAME = "author";
     private String AUTHOR_ID = "author_ID";
@@ -265,6 +268,10 @@ public class ListingController extends HttpServlet {
         dbStrategyClassName = getServletContext().getInitParameter("dbStrategyClass");
         daoClassName = getServletContext().getInitParameter("authorDao");
         jndiName = getServletContext().getInitParameter("connPoolName");*/
+        //Ask Spring to add stuff
+        ServletContext sctx = getServletContext();
+        WebApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(sctx);
+        authService = (AuthorService) ctx.getBean("authorService");
     }
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

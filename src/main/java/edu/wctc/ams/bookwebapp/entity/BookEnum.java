@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.wctc.ams.bookwebapp.model;
+package edu.wctc.ams.bookwebapp.entity;
 
 /**
  *
  * @author Alec
  */
-public enum DatabasesEnum {
-    AUTHOR, EDIT_DELETE_CREATE, UPDATE, ADD
+public enum BookEnum {
+    LIST, EDIT_DELETE_CREATE, UPDATE, ADD
 }
